@@ -1,0 +1,51 @@
+[Eth]
+NetworkId = 16
+
+[Eth.Miner]
+GasCeil = 40000000
+GasFloor = 30000000
+GasPrice = 1000000000
+Noverify = false
+Recommit = 10000000000
+
+[Eth.TxPool]
+AccountQueue = 256
+AccountSlots = 512
+GlobalQueue = 5000
+GlobalSlots = 10000
+Journal = "transactions.rlp"
+Lifetime = 10800000000000
+Locals = []
+NoLocals = true
+PriceBump = 10
+PriceLimit = 1000000000
+Rejournal = 3600000000000
+
+[Node]
+HTTPHost = "0.0.0.0"
+HTTPModules = ["eth", "net", "web3", "txpool", "debug", "txpool", "admin", "personal", "clique"]
+HTTPPort = 8545
+HTTPVirtualHosts = ["*"]
+IPCPath = "geth.ipc"
+InsecureUnlockAllowed = true
+WSHost = "0.0.0.0"
+WSModules = ["eth", "net", "web3", "debug", "txpool", "admin", "personal"]
+WSOrigins = ["*"]
+WSPort = 8546
+
+[Node.P2P]
+BootstrapNodes = [
+  "enode://252c1909d13af6173d75bc442e820a944c8ef24e572c96c87bec9708ec05c693758852a631e5836544476ac8486ad5b68e482b073cce6a351cca0c48c2a1e948@public-node:30303",
+]
+EnableMsgEvents = false
+ListenAddr = ":30303"
+MaxPeers = 1000
+NoDiscovery = false
+StaticNodes = [
+  "enode://252c1909d13af6173d75bc442e820a944c8ef24e572c96c87bec9708ec05c693758852a631e5836544476ac8486ad5b68e482b073cce6a351cca0c48c2a1e948@public-node:30303",
+]
+
+[Node.HTTPTimeouts]
+IdleTimeout = 120000000000
+ReadTimeout = 30000000000
+WriteTimeout = 30000000000

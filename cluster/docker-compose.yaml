@@ -1,0 +1,104 @@
+version: "3"
+services:
+  postgres:
+    restart: always
+    image: postgres:12.7-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=""
+      - POSTGRES_DB=ethereum
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - PGDATA=/app/pgdata
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+    networks:
+      - service-network
+
+  migrate:
+    image: vyeve/blockscout:v0.0.1
+    depends_on:
+      - postgres
+    command: >
+      bash -c "mix do ecto.create && mix do ecto.migrate"
+    environment:
+      - MIX_ENV=prod
+      - DATABASE_URL=postgresql://postgres:@postgres:5432/ethereum?ssl=false
+    networks:
+      - service-network
+
+  stats:
+    restart: always
+    image: ethereumex/eth-stats-dashboard:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - WS_SECRET=statistic
+    networks:
+      - service-network
+
+  init-public-node:
+    image: ethereum/client-go:v1.10.18
+    entrypoint: >
+      sh -c  "mkdir -p -m 0700 /app/geth/node/keystore && \
+              mkdir -p -m 0700 /app/geth/config && \
+              mkdir -p -m 0700 /app/geth/node/geth && \
+              cp /app/config/accounts/* /app/geth/node/keystore/ && \
+              cp /app/config/genesis.yaml /app/geth/config/genesis.yaml && \
+              cp /app/config/config.toml /app/geth/config/config.toml && \
+              cp /app/config/nodekey /app/geth/node/geth/nodekey && \
+              geth --datadir=/app/geth/node/ init /app/geth/config/genesis.yaml" 
+    volumes:
+      - type: bind
+        source: .
+        target: /app/
+    networks:
+      - service-network
+
+  public-node:
+    restart: always
+    image: ethereum/client-go:v1.10.18
+    depends_on:
+      - stats
+      - init-public-node
+    entrypoint: >
+      sh -c  "geth --datadir=/app/geth/node --identity=public-node --config=/app/geth/config/config.toml --http --ws --rpc.allow-unprotected-txs --ethstats=public-node:statistic@stats:3000  --nat=extip:0.0.0.0 --unlock=4F73301D48AB66942C4D476D65856D18CA40DAD0 --password=/app/geth/node/keystore/ACCOUNT_SECRET --allow-insecure-unlock --syncmode=full --mine"
+    ports:
+      - "8545:8545"
+      - "8546:8546"
+    volumes:
+      - type: bind
+        source: .
+        target: /app/
+    networks:
+      - service-network
+
+  blockscout:
+    restart: always
+    image: vyeve/blockscout:v0.0.1
+    depends_on:
+      - public-node
+      - postgres
+      - migrate
+    environment:
+      - BLOCK_TRANSFORMER=clique
+      - COIN=BNB
+      - DATABASE_URL=postgresql://postgres:@postgres:5432/ethereum?ssl=false
+      - ETHEREUM_JSONRPC_HTTP_URL=http://public-node:8545
+      - ETHEREUM_JSONRPC_TRACE_URL=ws://public-node:8546
+      - ETHEREUM_JSONRPC_VARIANT=geth
+      - ETHEREUM_JSONRPC_WS_URL=ws://public-node:8546
+      - MIX_ENV=prod
+      - POOL_SIZE=100
+      - WS_BLOCK_PERIOD=120000
+    entrypoint: mix phx.server
+    ports:
+      - "4000:4000"
+    networks:
+      - service-network
+
+networks:
+  service-network:

@@ -1,0 +1,66 @@
+{
+    "config": {
+        "chainId": 16,
+        "homesteadBlock": 0,
+        "eip150Block": 0,
+        "eip150Hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "eip155Block": 0,
+        "eip158Block": 0,
+        "byzantiumBlock": 0,
+        "constantinopleBlock": 0,
+        "petersburgBlock": 0,
+        "istanbulBlock": 0,
+        "muirGlacierBlock": 0,
+        "ramanujanBlock": 0,
+        "nielsBlock": 0,
+        "clique": {
+            "period": 3,
+            "epoch": 30000
+        }
+    },
+    "nonce": "0x0",
+    "timestamp": "0x0",
+    "extraData": "0x00000000000000000000000000000000000000000000000000000000000000004F73301D48AB66942C4D476D65856D18CA40DAD00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "gasLimit": "0x8000000",
+    "difficulty": "0x1",
+    "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "coinbase": "0x3333333333333333333333333333333333333333",
+    "alloc": {
+        "4F73301D48AB66942C4D476D65856D18CA40DAD0": {
+            "balance": "0xa364c98227eaa6adcbac0dead"
+        },
+        "F831F1A95B582E84A3CFCE869B8E416A3727E992": {
+            "balance": "0x579cbf7b1b9657eb5"
+        },
+        "EFAAD51619FFD3E0E4286084CCD9C45BFA68CBE1": {
+            "balance": "0xaf397ef6372cafd6a"
+        },
+        "0E4FCDCB69B97C3A275915F3EB83F97E8D7552A4": {
+            "balance": "0x106d63e7152c307c1f"
+        },
+        "B9D9EFA27679DCC5CC6E8584C68A850A1C38E8CC": {
+            "balance": "0x15e72fdec6e595fad4"
+        },
+        "54416E83AC3C96E8124E0E11070D227E50D51615": {
+            "balance": "0x1b60fbd6789efb7989"
+        },
+        "7830CAB126568546EAC32E25D728458334A418A8": {
+            "balance": "0x20dac7ce2a5860f83e"
+        },
+        "9BF1BCC6274026EFCBAF27C136E509E472399C8D": {
+            "balance": "0x265493c5dc11c676f3"
+        },
+        "D6ADBF96A1392110C0F7F1A00BF1AE6410BB1846": {
+            "balance": "0x2bce5fbd8dcb2bf5a8"
+        },
+        "D0C576A5DA9794BD8168C87203D7E2C4E7C2BCD7": {
+            "balance": "0x31482bb53f8491745d"
+        },
+        "51980052F6BB84A3941E2D56BC4C8C4DDDEFBA6D": {
+            "balance": "0x36c1f7acf13df6f312"
+        }
+    },
+    "number": "0x0",
+    "gasUsed": "0x0",
+    "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+}
