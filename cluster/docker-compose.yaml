@@ -41,7 +41,7 @@ services:
       - service-network
 
   init-public-node:
-    image: ethereum/client-go:v1.10.18
+    image: ethereum/client-go:v1.10.19
     entrypoint: >
       sh -c  "mkdir -p -m 0700 /app/geth/node/keystore && \
               mkdir -p -m 0700 /app/geth/config && \
@@ -60,7 +60,7 @@ services:
 
   public-node:
     restart: always
-    image: ethereum/client-go:v1.10.18
+    image: ethereum/client-go:v1.10.19
     depends_on:
       - stats
       - init-public-node
