@@ -1,0 +1,107 @@
+version: "3"
+services:
+  postgres:
+    restart: always
+    image: postgres:12.7-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=""
+      - POSTGRES_DB=ethereum
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - PGDATA=/app/cluster/pgdata
+    volumes:
+      - type: bind
+        source: ~/.ethereum/cluster
+        target: /app/cluster
+    networks:
+      - service-network
+
+  migrate:
+    image: vyeve/blockscout:v0.0.1
+    depends_on:
+      - postgres
+    command: >
+      bash -c "mix do ecto.create && mix do ecto.migrate"
+    environment:
+      - MIX_ENV=prod
+      - DATABASE_URL=postgresql://postgres:@postgres:5432/ethereum?ssl=false
+    networks:
+      - service-network
+
+  stats:
+    restart: always
+    image: ethereumex/eth-stats-dashboard:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - WS_SECRET=statistic
+    networks:
+      - service-network
+
+  init-public-node:
+    image: ethereum/client-go:v1.10.19
+    entrypoint: >
+      sh -c  "mkdir -p -m 0700 /app/cluster/node/keystore && \
+              mkdir -p -m 0700 /app/cluster/config && \
+              mkdir -p -m 0700 /app/cluster/node/geth && \
+              cp /tmp/ethereum/config/accounts/* /app/cluster/node/keystore/ && \
+              cp /tmp/ethereum/config/genesis.yaml /app/cluster/config/genesis.yaml && \
+              cp /tmp/ethereum/config/config.toml /app/cluster/config/config.toml && \
+              cp /tmp/ethereum/config/nodekey /app/cluster/node/geth/nodekey && \
+              geth --datadir=/app/cluster/node/ init /app/cluster/config/genesis.yaml"
+    volumes:
+      - type: bind
+        source: ~/.ethereum
+        target: /app
+      - type: bind
+        source: .
+        target: /tmp/ethereum
+    networks:
+      - service-network
+
+  public-node:
+    restart: always
+    image: ethereum/client-go:v1.10.19
+    depends_on:
+      - stats
+      - init-public-node
+    entrypoint: >
+      sh -c  "geth --datadir=/app/cluster/node --identity=public-node --config=/app/cluster/config/config.toml --http --ws --rpc.allow-unprotected-txs --ethstats=public-node:statistic@stats:3000  --nat=extip:0.0.0.0 --unlock=4F73301D48AB66942C4D476D65856D18CA40DAD0 --password=/app/cluster/node/keystore/ACCOUNT_SECRET --allow-insecure-unlock --vmdebug --dev --syncmode=full --mine"
+    ports:
+      - "8545:8545"
+      - "8546:8546"
+    volumes:
+      - type: bind
+        source: ~/.ethereum
+        target: /app
+    networks:
+      - service-network
+
+  blockscout:
+    restart: always
+    image: vyeve/blockscout:v0.0.1
+    depends_on:
+      - public-node
+      - postgres
+      - migrate
+    environment:
+      - BLOCK_TRANSFORMER=clique
+      - COIN=BNB
+      - DATABASE_URL=postgresql://postgres:@postgres:5432/ethereum?ssl=false
+      - ETHEREUM_JSONRPC_HTTP_URL=http://public-node:8545
+      - ETHEREUM_JSONRPC_TRACE_URL=ws://public-node:8546
+      - ETHEREUM_JSONRPC_VARIANT=geth
+      - ETHEREUM_JSONRPC_WS_URL=ws://public-node:8546
+      - MIX_ENV=prod
+      - POOL_SIZE=100
+      - WS_BLOCK_PERIOD=120000
+    entrypoint: mix phx.server
+    ports:
+      - "4000:4000"
+    networks:
+      - service-network
+
+networks:
+  service-network:
