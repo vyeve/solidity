@@ -1,0 +1,33 @@
+# kind create cluster --config 00-kind.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: ethereum
+networking:
+  apiServerAddress: "127.0.0.1"
+  apiServerPort: 6447
+nodes:
+- role: control-plane
+  extraMounts:
+  - hostPath: /home/vyeve/.kind/ethereum/
+    containerPath: /sharedfs
+  extraPortMappings:
+  - containerPort: 31001
+    hostPort: 8545
+    protocol: TCP
+    listenAddress: "127.0.0.1"
+  - containerPort: 31002
+    hostPort: 8546
+    protocol: TCP
+    listenAddress: "127.0.0.1"
+  - containerPort: 31003
+    hostPort: 9080
+    protocol: TCP
+    listenAddress: "127.0.0.1"
+  - containerPort: 31004
+    hostPort: 9081
+    protocol: TCP
+    listenAddress: "127.0.0.1"
+  - containerPort: 31005
+    hostPort: 5432
+    protocol: TCP
+    listenAddress: "127.0.0.1"

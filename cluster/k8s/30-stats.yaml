@@ -1,0 +1,121 @@
+apiVersion: v1
+data:
+  WS_SECRET: c3RhdGlzdGlj
+kind: Secret
+metadata:
+  labels:
+    app: stats
+  name: stats-secret
+  namespace: eth
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: stats
+  name: stats-service
+  namespace: eth
+spec:
+  ports:
+    - name: http
+      nodePort: 31004
+      port: 80
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    app: stats
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: stats
+  name: stats-service
+  namespace: eth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stats
+  template:
+    metadata:
+      labels:
+        app: stats
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: stats
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+      containers:
+        - env:
+            - name: WS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: WS_SECRET
+                  name: stats-secret
+            - name: APP_CONFIG
+              value: /app/data/config.json
+            - name: APP_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: APP_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: APP_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: APP_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          image: ethereumex/eth-stats-dashboard:v0.0.1
+          imagePullPolicy: IfNotPresent
+          name: service
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 20m
+              memory: 128Mi
+            requests:
+              cpu: 5m
+              memory: 32Mi
+          volumeMounts:
+            - mountPath: /app/discover
+              name: downward
+      volumes:
+        - downwardAPI:
+            items:
+              - fieldRef:
+                  fieldPath: metadata.name
+                mode: 384
+                path: podName
+              - fieldRef:
+                  fieldPath: metadata.namespace
+                mode: 384
+                path: podNamespace
+              - fieldRef:
+                  fieldPath: metadata.labels
+                mode: 384
+                path: labels
+              - fieldRef:
+                  fieldPath: metadata.annotations
+                mode: 384
+                path: annotations
+              - fieldRef:
+                  fieldPath: metadata.uid
+                mode: 384
+                path: uuid
+          name: downward

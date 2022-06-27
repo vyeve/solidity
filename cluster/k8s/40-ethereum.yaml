@@ -1,0 +1,467 @@
+apiVersion: v1
+data:
+  APP_GENESIS_CONFIG: /app/data/config.json
+  APP_VALIDATOR_ACCOUNT: 4F73301D48AB66942C4D476D65856D18CA40DAD0
+  DATA_DIR: /app/cluster
+  STATS_SVC: stats-service.eth.svc.cluster.local
+kind: ConfigMap
+metadata:
+  labels:
+    app: eth-node
+  name: eth-node-env-config
+  namespace: eth
+---
+apiVersion: v1
+data:
+  config.json: |-
+    {
+        "config": {
+            "chainId": 4308,
+            "homesteadBlock": 0,
+            "eip150Block": 0,
+            "eip150Hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "eip155Block": 0,
+            "eip158Block": 0,
+            "byzantiumBlock": 0,
+            "constantinopleBlock": 0,
+            "petersburgBlock": 0,
+            "istanbulBlock": 0,
+            "muirGlacierBlock": 0,
+            "ramanujanBlock": 0,
+            "nielsBlock": 0,
+            "clique": {
+                "period": 15,
+                "epoch": 30000
+            }
+        },
+        "nonce": "0x0",
+        "timestamp": "0x0",
+        "extraData": "0x00000000000000000000000000000000000000000000000000000000000000004F73301D48AB66942C4D476D65856D18CA40DAD00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "gasLimit": "0x8000000",
+        "difficulty": "0x1",
+        "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "coinbase": "0x3333333333333333333333333333333333333333",
+        "alloc": {
+            "4F73301D48AB66942C4D476D65856D18CA40DAD0": {
+                "balance": "0xa364c98227eaa6adcbac0dead"
+            },
+            "F831F1A95B582E84A3CFCE869B8E416A3727E992": {
+                "balance": "0x579cbf7b1b9657eb5"
+            },
+            "EFAAD51619FFD3E0E4286084CCD9C45BFA68CBE1": {
+                "balance": "0xaf397ef6372cafd6a"
+            },
+            "0E4FCDCB69B97C3A275915F3EB83F97E8D7552A4": {
+                "balance": "0x106d63e7152c307c1f"
+            },
+            "B9D9EFA27679DCC5CC6E8584C68A850A1C38E8CC": {
+                "balance": "0x15e72fdec6e595fad4"
+            },
+            "54416E83AC3C96E8124E0E11070D227E50D51615": {
+                "balance": "0x1b60fbd6789efb7989"
+            },
+            "7830CAB126568546EAC32E25D728458334A418A8": {
+                "balance": "0x20dac7ce2a5860f83e"
+            },
+            "9BF1BCC6274026EFCBAF27C136E509E472399C8D": {
+                "balance": "0x265493c5dc11c676f3"
+            },
+            "D6ADBF96A1392110C0F7F1A00BF1AE6410BB1846": {
+                "balance": "0x2bce5fbd8dcb2bf5a8"
+            },
+            "D0C576A5DA9794BD8168C87203D7E2C4E7C2BCD7": {
+                "balance": "0x31482bb53f8491745d"
+            },
+            "51980052F6BB84A3941E2D56BC4C8C4DDDEFBA6D": {
+                "balance": "0x36c1f7acf13df6f312"
+            }
+        },
+        "number": "0x0",
+        "gasUsed": "0x0",
+        "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    app: eth-node
+  name: eth-genesis-config
+  namespace: eth
+---
+apiVersion: v1
+data:
+  config.toml: |
+    [Eth]
+    NetworkId = 4308
+
+    [Eth.Miner]
+    GasCeil = 40000000
+    GasFloor = 30000000
+    GasPrice = 1000000000
+    Noverify = false
+    Recommit = 10000000000
+
+    [Eth.TxPool]
+    AccountQueue = 256
+    AccountSlots = 512
+    GlobalQueue = 5000
+    GlobalSlots = 10000
+    Journal = "transactions.rlp"
+    Lifetime = 10800000000000
+    Locals = []
+    NoLocals = true
+    PriceBump = 10
+    PriceLimit = 1000000000
+    Rejournal = 3600000000000
+
+    [Node]
+    HTTPHost = "0.0.0.0"
+    HTTPModules = ["eth", "net", "web3", "txpool", "debug", "txpool", "admin", "personal", "clique"]
+    HTTPPort = 8545
+    HTTPVirtualHosts = ["*"]
+    IPCPath = "geth.ipc"
+    InsecureUnlockAllowed = true
+    WSHost = "0.0.0.0"
+    WSModules = ["eth", "net", "web3", "debug", "txpool", "admin", "personal"]
+    WSOrigins = ["*"]
+    WSPort = 8546
+    HTTPCors = ["package://6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod"]
+
+    [Node.P2P]
+    BootstrapNodes = [
+      "enode://252c1909d13af6173d75bc442e820a944c8ef24e572c96c87bec9708ec05c693758852a631e5836544476ac8486ad5b68e482b073cce6a351cca0c48c2a1e948@eth-node-service:30303"
+    ]
+    EnableMsgEvents = false
+    ListenAddr = ":30303"
+    MaxPeers = 1000
+    NoDiscovery = false
+    StaticNodes = [
+      "enode://252c1909d13af6173d75bc442e820a944c8ef24e572c96c87bec9708ec05c693758852a631e5836544476ac8486ad5b68e482b073cce6a351cca0c48c2a1e948@eth-node-service:30303"
+    ]
+
+    [Node.HTTPTimeouts]
+    IdleTimeout = 120000000000
+    ReadTimeout = 30000000000
+    WriteTimeout = 30000000000
+kind: ConfigMap
+metadata:
+  labels:
+    app: eth-node
+  name: eth-config-toml
+  namespace: eth
+---
+apiVersion: v1
+data:
+  ACCOUNT_SECRET: YmluYW5jZQ==
+  UTC--2021-09-30T15-07-54.791442278Z--4f73301d48ab66942c4d476d65856d18ca40dad0:
+    |
+    eyJhZGRyZXNzIjoiNGY3MzMwMWQ0OGFiNjY5NDJjNGQ0NzZkNjU4NTZkMThjYTQwZGFkMC
+    IsImNyeXB0byI6eyJjaXBoZXIiOiJhZXMtMTI4LWN0ciIsImNpcGhlcnRleHQiOiJkNDgw
+    MDY5ZTRlMjA0MTZiYWJmYzRlYWEzZDA2MzE4NmM2NTAyYmRjYWY5NDg2ZGQxYmFkMTg0Nz
+    EzOGE2NmE4IiwiY2lwaGVycGFyYW1zIjp7Iml2IjoiZTliNWUyMjNkZDIwNTc5MmQ3YmM5
+    ZDNhNDMwMGY0ZDUifSwia2RmIjoic2NyeXB0Iiwia2RmcGFyYW1zIjp7ImRrbGVuIjozMi
+    wibiI6MjYyMTQ0LCJwIjoxLCJyIjo4LCJzYWx0IjoiNmVjODNlMzk5YjQ4M2Y5YTMwZmNj
+    NDA0YmZkYjE5YTJkOTk4MmU3MjlhODE2YmMyNjY0ODczNDUwYjBkNDRlMSJ9LCJtYWMiOi
+    I2YmFiOTY2NTNlYzA2MDYwYzgwM2MzODdkNjZiOWQ4NjhmOTE3NWE1Nzg1OGM1YmE0MmM4
+    NjlmYjg2ODcwMjZiIn0sImlkIjoiZmJiOGNiYTctNjk3NS00NzcwLWI2YzEtYzAxNzJjNT
+    k5MDgyIiwidmVyc2lvbiI6M30=
+  UTC--2021-10-01T06-37-34.284595786Z--f831f1a95b582e84a3cfce869b8e416a3727e992:
+    |
+    eyJhZGRyZXNzIjoiZjgzMWYxYTk1YjU4MmU4NGEzY2ZjZTg2OWI4ZTQxNmEzNzI3ZTk5Mi
+    IsImNyeXB0byI6eyJjaXBoZXIiOiJhZXMtMTI4LWN0ciIsImNpcGhlcnRleHQiOiIzZjlm
+    YWI5ZjY4ZTZhNjIyOThlM2ExODY2N2IyMmQ0MDdjNTE0NjBiYTYwMTJkNjM0Y2I0NzIxNm
+    JkODNhMzMzIiwiY2lwaGVycGFyYW1zIjp7Iml2IjoiYjZmYWE5MjVhODdmZWM2OWY4ZTUx
+    ZjljNTk2MDY2YTkifSwia2RmIjoic2NyeXB0Iiwia2RmcGFyYW1zIjp7ImRrbGVuIjozMi
+    wibiI6MjYyMTQ0LCJwIjoxLCJyIjo4LCJzYWx0IjoiMDlhNjAzNTQyODUyNjJiM2M4Nzhl
+    OGFiNzAwM2E4OTAxZmU5Yjg4MzdjNzEwMjI4ZGE3MWQwMzBkOTdmOTMxYiJ9LCJtYWMiOi
+    IwMTJiZWY4NjczZmM4N2UwYzgzMmU5MzI2ODVjODhkNTI5OGQ3ZTJlODc4M2EyNDZkMDYy
+    YWEwZWE4MDdmMmQzIn0sImlkIjoiNGMwNzU4OGUtMWQ4Mi00YzhkLWE2NjQtZDNkYTUyNG
+    RiOGE1IiwidmVyc2lvbiI6M30=
+  UTC--2021-10-01T06-37-40.316374206Z--efaad51619ffd3e0e4286084ccd9c45bfa68cbe1:
+    |
+    eyJhZGRyZXNzIjoiZWZhYWQ1MTYxOWZmZDNlMGU0Mjg2MDg0Y2NkOWM0NWJmYTY4Y2JlMS
+    IsImNyeXB0byI6eyJjaXBoZXIiOiJhZXMtMTI4LWN0ciIsImNpcGhlcnRleHQiOiJiMmQ3
+    Zjk4YTg5OTRkODYxZTIxNDAxMDEyOGNjNTZhMDdkNDQ1YjE0YTBmODA4ODUzYzRlMTQ2MW
+    VmNzUwZDcwIiwiY2lwaGVycGFyYW1zIjp7Iml2IjoiOTYzMDgzYzYxZjA3Nzg5MzBmMDlj
+    NGI1ZmIzOTg5ZWEifSwia2RmIjoic2NyeXB0Iiwia2RmcGFyYW1zIjp7ImRrbGVuIjozMi
+    wibiI6MjYyMTQ0LCJwIjoxLCJyIjo4LCJzYWx0IjoiOWYyNjAwODJiNWUyODMzMWM0MDg3
+    NTVkODQwM2RiNGY1MmZhYzMwNmY3YzRiMWM0MGQ3YWIyNjllNmI3ODQ4NSJ9LCJtYWMiOi
+    I1OWEyNjZlYWJiYWU1MTlmOGVlNmJiY2Q3NDg0MzdiNGZhMmE3YTMyMjlkZTRiMWNkNzQ4
+    NWMyNGQ1M2MyOGQ5In0sImlkIjoiYjY5ZGZiMTUtZjdjZS00NTQ1LWE4ZjQtMThlYTUyYj
+    ZhMTZlIiwidmVyc2lvbiI6M30=
+  UTC--2021-10-01T06-37-43.428076557Z--0e4fcdcb69b97c3a275915f3eb83f97e8d7552a4:
+    |
+    eyJhZGRyZXNzIjoiMGU0ZmNkY2I2OWI5N2MzYTI3NTkxNWYzZWI4M2Y5N2U4ZDc1NTJhNC
+    IsImNyeXB0byI6eyJjaXBoZXIiOiJhZXMtMTI4LWN0ciIsImNpcGhlcnRleHQiOiJkMDg5
+    YTZlYjZmNzI4ZTgyMTgzZWI3Yzg3ZmFhNTkyNDM0OTdiZTJhNWY2YjdlNzE3NDI3ZDEzZG
+    E2NzJjODlkIiwiY2lwaGVycGFyYW1zIjp7Iml2IjoiNmVjZTYwMGE1YWZjMzU1NTJmYmZj
+    YjU3NzUzMzMyNzIifSwia2RmIjoic2NyeXB0Iiwia2RmcGFyYW1zIjp7ImRrbGVuIjozMi
+    wibiI6MjYyMTQ0LCJwIjoxLCJyIjo4LCJzYWx0IjoiMTgyZTJmOGNhNWVmN2I5OGI0NmVj
+    MDljMjY1YjBhYmFhOWJjOWM2NmMxMWU0ZGYwNjZiNDlkZjgyODAyOTQ4ZCJ9LCJtYWMiOi
+    JmNTBmNDJjNzgyMmEwMWU1MTAwZDRmOGFhYjQ3ZDZkYTJlMDNmZDIyYmE2YWNmZjdiZmEw
+    N2Q1MzlhY2NhMzQ1In0sImlkIjoiNjIyNzNjZjctYzRiZi00ZjVhLWIwODItNTljYWI4ZG
+    FlZDliIiwidmVyc2lvbiI6M30=
+  UTC--2021-10-01T06-37-50.901297685Z--b9d9efa27679dcc5cc6e8584c68a850a1c38e8cc:
+    |
+    eyJhZGRyZXNzIjoiYjlkOWVmYTI3Njc5ZGNjNWNjNmU4NTg0YzY4YTg1MGExYzM4ZThjYy
+    IsImNyeXB0byI6eyJjaXBoZXIiOiJhZXMtMTI4LWN0ciIsImNpcGhlcnRleHQiOiJhZjg0
+    MWEzZGM5NGFlOTIzYWJiZTkyMzkwMzI5OGUwNzk4NjNmMDc1NjBkZTJjOTZjMGJmMzY2MD
+    A5OTIxM2ZmIiwiY2lwaGVycGFyYW1zIjp7Iml2IjoiM2M5ZjliYWQzOGUxNGU2ZjdiMTc2
+    N2I2OWFhNTBiMmQifSwia2RmIjoic2NyeXB0Iiwia2RmcGFyYW1zIjp7ImRrbGVuIjozMi
+    wibiI6MjYyMTQ0LCJwIjoxLCJyIjo4LCJzYWx0IjoiNDg0ZWRlYmM3ZjBjZTYwZmY2Yjcy
+    OWYyZDhkODEzNjYyODFjN2Y1YmRkN2M5NWMxYjA4NjE5NDU2MDUyNjk4MCJ9LCJtYWMiOi
+    IyNGViNTIzZTU3N2EyOTEwN2Y0Y2MyZmE4MDBmNWVhNTg1ZGY1MmRhMDZjZGExYzM3NzE4
+    YWM3ZDQ5MWQzMzc2In0sImlkIjoiY2JlN2NlYjgtNDZlMi00YzVhLWEwZjktNDlmM2U5NW
+    Q4NDFmIiwidmVyc2lvbiI6M30=
+  UTC--2021-10-05T07-52-45.684856713Z--54416e83ac3c96e8124e0e11070d227e50d51615:
+    |
+    eyJhZGRyZXNzIjoiNTQ0MTZlODNhYzNjOTZlODEyNGUwZTExMDcwZDIyN2U1MGQ1MTYxNS
+    IsImNyeXB0byI6eyJjaXBoZXIiOiJhZXMtMTI4LWN0ciIsImNpcGhlcnRleHQiOiJlZDFi
+    OWIzMjM4MjRhMmYzZmE2M2IxMjllNzFhY2EzODVkZmFhNjU0YWQ3NWVhZTUyMjE1MzU1Yj
+    I3YTUwM2IzIiwiY2lwaGVycGFyYW1zIjp7Iml2IjoiODQzOTVlNzFkZTE1YTE2MjRjZGQ1
+    YjMzYTFiZTlhNzUifSwia2RmIjoic2NyeXB0Iiwia2RmcGFyYW1zIjp7ImRrbGVuIjozMi
+    wibiI6MjYyMTQ0LCJwIjoxLCJyIjo4LCJzYWx0IjoiZjMyZjc0YzViZjMxNTdlZmUyODQ5
+    ZWExZGYzMmU2YzgxMmY0YWRhN2U3MGJmZjIxNzBmYWFlNjQwYzM5MTFiOSJ9LCJtYWMiOi
+    IwMDRkY2NiMWQ0YmIzMTgyYzhjMTQwODQ4NmRhZjE1NTIyZjA3ZmZmZTVjYTlmZTAwZTI1
+    MjU0NmYyYTBmN2NiIn0sImlkIjoiYWM2ZTkzMTUtYzU4Zi00ZTdjLWJjZDctYzkzYzhhMT
+    ZjNjZjIiwidmVyc2lvbiI6M30=
+  UTC--2021-10-05T07-52-49.535335145Z--7830cab126568546eac32e25d728458334a418a8:
+    |
+    eyJhZGRyZXNzIjoiNzgzMGNhYjEyNjU2ODU0NmVhYzMyZTI1ZDcyODQ1ODMzNGE0MThhOC
+    IsImNyeXB0byI6eyJjaXBoZXIiOiJhZXMtMTI4LWN0ciIsImNpcGhlcnRleHQiOiI1N2Rh
+    ZGJhMmRiN2I3Y2NmYjAwY2NjOWUzYjI2MjhiNjI0OGVlMzMyM2Q5NDU1MmIxNTQ1YWExMz
+    JiYjBiYTgxIiwiY2lwaGVycGFyYW1zIjp7Iml2IjoiYjI2MjdmZjRlNTQzYjBkNTk4MWUw
+    NTcxNDIxOTM5MDAifSwia2RmIjoic2NyeXB0Iiwia2RmcGFyYW1zIjp7ImRrbGVuIjozMi
+    wibiI6MjYyMTQ0LCJwIjoxLCJyIjo4LCJzYWx0IjoiMTUwOTg5NmExYjk5MmRjYmE1ZGYx
+    YzZiMjliNWM4OGFkNjljZWI2ZGVjN2M5YjY1MTNlNmMxNjIwM2RmMDc5YiJ9LCJtYWMiOi
+    IwNTgyMGE3YmQ4MWQ4ZmIwNWUzOGE0NzIxZTU0MGUwYzU5Y2NiMDgzMDk3OWM0YjRhZjM5
+    N2ZlYjIyNWY5N2I2In0sImlkIjoiMjMwOWRjMGEtZTk0NC00ZmJiLWJjYzEtNmVjZTA4Zm
+    UyYzAzIiwidmVyc2lvbiI6M30=
+  UTC--2021-10-05T07-52-52.661447197Z--9bf1bcc6274026efcbaf27c136e509e472399c8d:
+    |
+    eyJhZGRyZXNzIjoiOWJmMWJjYzYyNzQwMjZlZmNiYWYyN2MxMzZlNTA5ZTQ3MjM5OWM4ZC
+    IsImNyeXB0byI6eyJjaXBoZXIiOiJhZXMtMTI4LWN0ciIsImNpcGhlcnRleHQiOiIzNjQ2
+    ODAwM2YxMzBiMjkwZjUyZTc0NjNjMGEwZDU1NTQ4YzM5MWYwMTBiZTcxNGUxNTVkNWU1Mz
+    kyNTkxYTI0IiwiY2lwaGVycGFyYW1zIjp7Iml2IjoiOTg0ZjJiYzE2ZjExODc1NjQ4ZGE0
+    ZTdmYmE1NGIzYjgifSwia2RmIjoic2NyeXB0Iiwia2RmcGFyYW1zIjp7ImRrbGVuIjozMi
+    wibiI6MjYyMTQ0LCJwIjoxLCJyIjo4LCJzYWx0IjoiM2VhMDk0ZGY0NzMzY2E0Mzg3MzE0
+    NmJlZmE3ZGQ2NzZkNmI4ZDYzMDhhN2NhYzA4Y2VhNzQ3ODVhZTExMTE3MCJ9LCJtYWMiOi
+    JkMmExNWM2YTFmMTcwOTI2MDYxZTU2MTUwMzllZTllMjQyZmYyNDFjYTM5NjA3MTY3NDk1
+    NzM1YjIzMTkzYzEyIn0sImlkIjoiZDkyNWM4MzgtZWQxNC00YmM1LThiNzMtOWFlZTRkMG
+    Y3NWQwIiwidmVyc2lvbiI6M30=
+  UTC--2021-10-05T07-52-55.802400785Z--d6adbf96a1392110c0f7f1a00bf1ae6410bb1846:
+    |
+    eyJhZGRyZXNzIjoiZDZhZGJmOTZhMTM5MjExMGMwZjdmMWEwMGJmMWFlNjQxMGJiMTg0Ni
+    IsImNyeXB0byI6eyJjaXBoZXIiOiJhZXMtMTI4LWN0ciIsImNpcGhlcnRleHQiOiIzZDg2
+    ZWJkNWE2MjE2YzZjM2M1YjE1ZWIxNTllYjQ1YTc4ODYyNjBmNjhkMTY3NzVhOTZlMjZkNT
+    A3ZmY3MDBkIiwiY2lwaGVycGFyYW1zIjp7Iml2IjoiMmIyYzZjYmM3MjFiYmZlZjAwMWQ2
+    ZWFhMWNkZTQwM2QifSwia2RmIjoic2NyeXB0Iiwia2RmcGFyYW1zIjp7ImRrbGVuIjozMi
+    wibiI6MjYyMTQ0LCJwIjoxLCJyIjo4LCJzYWx0IjoiZmUyNWIwNGQzNGQ4NGEyYzc5MGNm
+    NzljZDk3YjExNDkwMzczNjYxNmM1ODM1OTY4NmZiN2Y1ZmNhZDhmNDI0YyJ9LCJtYWMiOi
+    I3MDdmNDQ4OTFjZWQ0YWQ2NzAzMWZhYzdjMzFiZWU2YzA3MDkzOThjYTQ0NmVhMzJhMjM2
+    YzZjZTlhMWIxZmE0In0sImlkIjoiN2Q4NWYxZmQtMTI0YS00NzBhLWI3OWMtYWY0NDE5Mz
+    k3MjI3IiwidmVyc2lvbiI6M30=
+  UTC--2021-10-05T07-52-58.732475883Z--d0c576a5da9794bd8168c87203d7e2c4e7c2bcd7:
+    |
+    eyJhZGRyZXNzIjoiZDBjNTc2YTVkYTk3OTRiZDgxNjhjODcyMDNkN2UyYzRlN2MyYmNkNy
+    IsImNyeXB0byI6eyJjaXBoZXIiOiJhZXMtMTI4LWN0ciIsImNpcGhlcnRleHQiOiI1YWNh
+    YTA3MjIzMDNlYzJiNTBiNmM2YThiNzdjMjVmNWNhYWFkYTM3ODE5YWI3MGIxNzA5OGIwOD
+    EyODEyYjE5IiwiY2lwaGVycGFyYW1zIjp7Iml2IjoiMDVmODExMjNhNzU3Zjk5ZWRlOTQ0
+    M2M0Yjg2YTg0ZTAifSwia2RmIjoic2NyeXB0Iiwia2RmcGFyYW1zIjp7ImRrbGVuIjozMi
+    wibiI6MjYyMTQ0LCJwIjoxLCJyIjo4LCJzYWx0IjoiOTM1OTZkMDIwNjc4OTk5ZmVmZWVl
+    OTgyODZhNWZhMjViYmQyYWFmZjg5ZDRkYzkzODkxZWZmZjg4MGNmZGY0MyJ9LCJtYWMiOi
+    I2Y2E2YWExOWQ4YTAzYTA1MzI2ZjFjYTgzNTdkNThiZDE3ODA1NTExYjZlY2JiODcwYjBi
+    OTliNjdmYzA5NTc0In0sImlkIjoiNGQ0MjJjNWQtYWMxNy00ZTRhLWJhZmItMGY5NWRmYz
+    ZhNzEzIiwidmVyc2lvbiI6M30=
+  UTC--2021-10-05T07-53-03.152039486Z--51980052f6bb84a3941e2d56bc4c8c4dddefba6d:
+    |
+    eyJhZGRyZXNzIjoiNTE5ODAwNTJmNmJiODRhMzk0MWUyZDU2YmM0YzhjNGRkZGVmYmE2ZC
+    IsImNyeXB0byI6eyJjaXBoZXIiOiJhZXMtMTI4LWN0ciIsImNpcGhlcnRleHQiOiJlMTY2
+    OTYwMzgxYTU3OGRhMzA3MDVmMjc4MjMzNmYyYzE2MjgxZjJkYmZmNWIwMjNjZDUxNWM4NW
+    VmOTExMzczIiwiY2lwaGVycGFyYW1zIjp7Iml2IjoiZTUxNGZiODMwMGY4MjVkYzY3OTQy
+    NDg3NTg1YTZiMDEifSwia2RmIjoic2NyeXB0Iiwia2RmcGFyYW1zIjp7ImRrbGVuIjozMi
+    wibiI6MjYyMTQ0LCJwIjoxLCJyIjo4LCJzYWx0IjoiMGJjYTRkODcwZmE2MDA5Zjk2NmJk
+    Y2IyZWMyZDAxOWJkZTlhMTI4ODZhMGU4OGNiZmRjNGJmYjNmZTIwZmMwZCJ9LCJtYWMiOi
+    JiNmYyNDYzNzg2ZTIzMjBjOTU3OTc4YTk0NzhhZjkyODZhMTA4NGM5YmJiMDg0N2UwZjBm
+    YjkyODQ0ZGJiNzk2In0sImlkIjoiZGYzNWIxYWQtN2IzNi00MTZkLTg1OGQtMzYzOTU5MT
+    g3MGRhIiwidmVyc2lvbiI6M30=
+  nodekey: |
+    N2VjYmFlMWZmZjI0YzBlZGRmNDBmYjdlYjA1NTRkYTA3ZDU0NGExYjYwZGY1YWJjZjQ1MW
+    Y5Y2MzMTI2N2ZmYw==
+kind: Secret
+metadata:
+  labels:
+    app: eth-node
+  name: eth-accounts
+  namespace: eth
+type: Opaque
+---
+apiVersion: v1
+data:
+  WS_SECRET: c3RhdGlzdGlj
+kind: Secret
+metadata:
+  labels:
+    app: eth-node
+  name: stats-secret
+  namespace: eth
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: eth-node
+  name: eth-node-service
+  namespace: eth
+spec:
+  ports:
+    - name: rpc
+      port: 8545
+      nodePort: 31001
+      protocol: TCP
+      targetPort: 8545
+    - name: ws
+      port: 8546
+      nodePort: 31002
+      protocol: TCP
+      targetPort: 8546
+    - name: discovery-tcp
+      port: 30303
+      protocol: TCP
+  selector:
+    app: eth-node
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: eth-node
+  name: eth-node
+  namespace: eth
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eth-node
+  serviceName: tx
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "9090"
+        prometheus.io/scrape: "true"
+      labels:
+        app: eth-node
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: eth-node
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+      containers:
+        - args:
+            - -c
+            - |
+              geth \
+              --datadir=$DATA_DIR \
+              --identity=eth-node \
+              --config=/app/config/config.toml \
+              --http \
+              --ws \
+              --rpc.allow-unprotected-txs \
+              --ethstats=eth-node:$WS_SECRET@$STATS_SVC  \
+              --nat=extip:0.0.0.0 \
+              --unlock=$APP_VALIDATOR_ACCOUNT \
+              --password=$DATA_DIR/keystore/ACCOUNT_SECRET \
+              --allow-insecure-unlock \
+              --vmdebug \
+              --syncmode=full \
+              --mine
+          command:
+            - /bin/sh
+          envFrom:
+            - configMapRef:
+                name: eth-node-env-config
+          env:
+            - name: WS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: WS_SECRET
+                  name: stats-secret
+          image: ethereum/client-go:v1.10.19
+          imagePullPolicy: IfNotPresent
+          name: node
+          ports:
+            - containerPort: 8545
+              name: rpc
+            - containerPort: 8546
+              name: ws
+            - containerPort: 30303
+              name: discovery-tcp
+              protocol: TCP
+            - containerPort: 30303
+              name: discovery-udp
+              protocol: UDP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 3072Mi
+            requests:
+              cpu: 200m
+              memory: 1536Mi
+          volumeMounts:
+            - mountPath: /app/cluster
+              name: datadir
+            - mountPath: /app/config/
+              name: toml-volume
+      initContainers:
+        - args:
+            - -c
+            - |
+              mkdir -p -m 0777 $DATA_DIR/keystore && \
+              mkdir -p -m 0777 $DATA_DIR/geth && \
+              cp /app/accounts/* $DATA_DIR/keystore && \
+              if ls -1A $DATA_DIR/geth/LOCK | grep -q . ;\
+              then echo "data dir already initialized"; \
+              exit 0; \
+              fi; \
+              echo "try to initialize..." && \
+              mv $DATA_DIR/keystore/nodekey $DATA_DIR/geth/nodekey && \
+              geth \
+              --datadir=$DATA_DIR \
+              init \
+              $APP_GENESIS_CONFIG
+          command:
+            - /bin/sh
+          envFrom:
+            - configMapRef:
+                name: eth-node-env-config
+          image: ethereum/client-go:v1.10.19
+          imagePullPolicy: IfNotPresent
+          name: init
+          volumeMounts:
+            - mountPath: /app/data
+              name: config-volume
+            - mountPath: /app/cluster
+              name: datadir
+            - mountPath: /app/accounts
+              name: account-secret
+      volumes:
+        - configMap:
+            name: eth-genesis-config
+          name: config-volume
+        - name: account-secret
+          secret:
+            secretName: eth-accounts
+        - hostPath:
+            path: /sharedfs/node
+            type: DirectoryOrCreate
+          name: datadir
+        - configMap:
+            name: eth-config-toml
+          name: toml-volume
