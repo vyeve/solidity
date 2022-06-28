@@ -43,7 +43,7 @@ data:
         "coinbase": "0x3333333333333333333333333333333333333333",
         "alloc": {
             "4F73301D48AB66942C4D476D65856D18CA40DAD0": {
-                "balance": "0xa364c98227eaa6adcbac0dead"
+                "balance": "0xa364c98227eaa6adcbac0"
             },
             "F831F1A95B582E84A3CFCE869B8E416A3727E992": {
                 "balance": "0x579cbf7b1b9657eb5"
@@ -124,7 +124,7 @@ data:
     WSModules = ["eth", "net", "web3", "debug", "txpool", "admin", "personal"]
     WSOrigins = ["*"]
     WSPort = 8546
-    HTTPCors = ["package://6fd22d6fe5549ad4c4d8fd3ca0b7816b.mod"]
+    HTTPCors = ["*"]
 
     [Node.P2P]
     BootstrapNodes = [
