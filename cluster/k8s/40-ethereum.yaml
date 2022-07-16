@@ -2,6 +2,16 @@ apiVersion: v1
 data:
   APP_GENESIS_CONFIG: /app/data/config.json
   APP_VALIDATOR_ACCOUNT: 4F73301D48AB66942C4D476D65856D18CA40DAD0
+  APP_ACCOUNT_0: F831F1A95B582E84A3CFCE869B8E416A3727E992
+  APP_ACCOUNT_1: EFAAD51619FFD3E0E4286084CCD9C45BFA68CBE1
+  APP_ACCOUNT_2: 0E4FCDCB69B97C3A275915F3EB83F97E8D7552A4
+  APP_ACCOUNT_3: B9D9EFA27679DCC5CC6E8584C68A850A1C38E8CC
+  APP_ACCOUNT_4: 54416E83AC3C96E8124E0E11070D227E50D51615
+  APP_ACCOUNT_5: 7830CAB126568546EAC32E25D728458334A418A8
+  APP_ACCOUNT_6: 9BF1BCC6274026EFCBAF27C136E509E472399C8D
+  APP_ACCOUNT_7: D6ADBF96A1392110C0F7F1A00BF1AE6410BB1846
+  APP_ACCOUNT_8: D0C576A5DA9794BD8168C87203D7E2C4E7C2BCD7
+  APP_ACCOUNT_9: 51980052F6BB84A3941E2D56BC4C8C4DDDEFBA6D
   DATA_DIR: /app/cluster
   STATS_SVC: stats-service.eth.svc.cluster.local
 kind: ConfigMap
@@ -376,7 +386,17 @@ spec:
               --rpc.allow-unprotected-txs \
               --ethstats=eth-node:$WS_SECRET@$STATS_SVC  \
               --nat=extip:0.0.0.0 \
-              --unlock=$APP_VALIDATOR_ACCOUNT \
+              --unlock=$APP_VALIDATOR_ACCOUNT,\
+              $APP_ACCOUNT_0,\
+              $APP_ACCOUNT_1,\
+              $APP_ACCOUNT_2,\
+              $APP_ACCOUNT_3,\
+              $APP_ACCOUNT_4,\
+              $APP_ACCOUNT_5,\
+              $APP_ACCOUNT_6,\
+              $APP_ACCOUNT_7,\
+              $APP_ACCOUNT_8,\
+              $APP_ACCOUNT_9 \
               --password=$DATA_DIR/keystore/ACCOUNT_SECRET \
               --allow-insecure-unlock \
               --vmdebug \
@@ -393,7 +413,7 @@ spec:
                 secretKeyRef:
                   key: WS_SECRET
                   name: stats-secret
-          image: ethereum/client-go:v1.10.19
+          image: ethereum/client-go:v1.10.20
           imagePullPolicy: IfNotPresent
           name: node
           ports:
@@ -441,7 +461,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: eth-node-env-config
-          image: ethereum/client-go:v1.10.19
+          image: ethereum/client-go:v1.10.20
           imagePullPolicy: IfNotPresent
           name: init
           volumeMounts:
