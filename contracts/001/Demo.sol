@@ -14,7 +14,7 @@ contract Shop {
         payments[msg.sender] = msg.value;
     }
 
-    function withdrawAll() public payable {
+    function withdrawAll() public {
         address payable _to = payable(owner);
         address _contract = address(this);
         _to.transfer(_contract.balance);
